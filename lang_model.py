@@ -1,9 +1,12 @@
 from openai import OpenAI
+from configparser import ConfigParser
 
-API_KEY = "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"
 GPT3_MODEL = "gpt-3.5-turbo-1106"
 COMPLETION_MODEL = "gpt-3.5-turbo-instruct"
-client = OpenAI(api_key=API_KEY)
+
+config = ConfigParser()
+config.read("config.cfg")
+client = OpenAI(api_key=config["OpenAI"]["OPEN_AI_API_KEY"])
 
 
 def chat_response(sys_content: str, text_in: str) -> str:
