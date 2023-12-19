@@ -76,6 +76,19 @@ def insert(text_in: str) -> str:
     return chat_response(sys_content + examples, text_in)
 
 
+def quoted_instruct(text_in: str) -> str:
+    print("Quoted Instruct Query")
+    ind = '||"'
+    content_front, _, after_ind = text_in.partition(ind)
+    instr, _, content_back = after_ind.partition('"')
+
+    sys_content = f"""You are a general use short-form assistant. Your Instruction for this prompt is "{instr}".
+    The user will provide a small amount of text, you must follow the instructions in the Instruction as best as you can as concisely as possible.
+    Use as few words as you can that are still gramatically correct. Do not send more than one line of text unless specified.
+    If the request is for a specific word or phrase, respond with only the answer, and without punctuation."""
+    return chat_response(sys_content, f"{content_front} {content_back}")
+
+
 def complete(text_in: str) -> str:
     print("Completion Query")
     return completion_response(text_in)

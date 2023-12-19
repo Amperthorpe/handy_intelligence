@@ -61,8 +61,8 @@ class HandyIntelligence(rumps.App):
             self.ai_process(lm.insert, "|..|", None)
         elif "=||" in self.board:
             self.calc_process("=||")
-        # elif "|..." in self.board:
-        # self.ai_process(lm.complete, "|...")
+        elif '||"' in self.board:
+            self.ai_process(lm.quoted_instruct, '||"', None)
         else:
             print("No indicator present.")
             self.title = self.default_icon
