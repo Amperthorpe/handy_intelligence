@@ -72,7 +72,7 @@ def insert(text_in: str) -> str:
     Assistant: the words joy, cheery, and delight also mean happy
     
     User: Harare is the capital of Zimbabwe, it's best known for its vibrant culture and lively atmosphere. Another lovely city nearby is Bulawayo. Bulawayo's name comes from {ind}
-    Assistant: Harare is the capital of Zimbabwe, it's best known for its vibrant culture and lively atmosphere. Another lovely city nearby is Bulawayo. Bulawayo's name comes from the Ndebele words "iBhulu" and "lo," meaning "the place of slaughter."""
+    Assistant: Harare is the capital of Zimbabwe, it's best known for its vibrant culture and lively atmosphere. Another lovely city nearby is Bulawayo. Bulawayo's name comes from the Ndebele words "iBhulu" and "lo," meaning "the place of slaughter.\""""
     return chat_response(sys_content + examples, text_in)
 
 
