@@ -45,18 +45,28 @@ def _is_logging_debug():
     return any(handler.level <= logging.DEBUG for handler in root.handlers)
 
 
-def _format_time(seconds):
-    if seconds < 60:
-        return f"{seconds} sec"
-    elif seconds < 3600:
-        minutes = seconds // 60
-        return f"{minutes} min"
-    elif seconds < 86400:
-        hours = seconds // 3600
-        return f"{hours} hr"
+# def _format_time(seconds):
+#     if seconds < 60:
+#         return f"{seconds} sec"
+#     elif seconds < 3600:
+#         minutes = seconds // 60
+#         return f"{minutes} min"
+#     elif seconds < 86400:
+#         hours = seconds // 3600
+#         return f"{hours} hr"
+#     else:
+#         days = seconds // 86400
+#         return f"{days} days"
+
+
+def _format_time(seconds: int) -> str:
+    m = seconds // 60
+    h = seconds // 3600
+    if seconds < 86400:
+        return f"{h}:{m}:{seconds}"
     else:
-        days = seconds // 86400
-        return f"{days} days"
+        d = seconds // 86400
+        return f"{d} days, {h}:{m}:{seconds}"
 
 
 ### Clipboard ###
@@ -107,7 +117,7 @@ class HandyIntelligence(rumps.App):
     def check_clipboard(self, _):
         if _is_logging_debug():
             self._check_counter += 1
-            if self._check_counter % 60 == 0:
+            if self._check_counter % 900 == 0:  # 15 Minutes
                 logger.debug(
                     f"Check: #{self._check_counter}, Running for {_format_time(self._check_counter)}"
                 )
@@ -117,7 +127,7 @@ class HandyIntelligence(rumps.App):
             return
 
         self.last_board = self.board
-        print(f"New Input: '{self.board}'")
+        logger.info(f"New Input: '{self.board}'")
 
         if "|||" in self.board:
             self.ai_process(lm.spellcheck, "|||")
@@ -130,7 +140,7 @@ class HandyIntelligence(rumps.App):
         elif '||"' in self.board:
             self.ai_process(lm.quoted_instruct, '||"', None)
         else:
-            print("No indicator present.")
+            logger.info("No indicator present.")
             self.title = self.default_icon
         print()
 
