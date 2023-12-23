@@ -37,6 +37,25 @@ logging.config.dictConfig(log_config)
 logger = logging.getLogger(__name__)
 
 
+def _is_logging_debug():
+    root = logging.getLogger()
+    return any(handler.level <= logging.DEBUG for handler in root.handlers)
+
+
+def _format_time(seconds):
+    if seconds < 60:
+        return f"{seconds} sec"
+    elif seconds < 3600:
+        minutes = seconds // 60
+        return f"{minutes} min"
+    elif seconds < 86400:
+        hours = seconds // 3600
+        return f"{hours} hr"
+    else:
+        days = seconds // 86400
+        return f"{days} days"
+
+
 ### Clipboard ###
 def read_from_clipboard():
     return subprocess.check_output("pbpaste", env={"LANG": "en_US.UTF-8"}).decode(
@@ -55,19 +74,23 @@ def write_to_clipboard(output):
 class HandyIntelligence(rumps.App):
     def __init__(self):
         super(HandyIntelligence, self).__init__("🌙")
+        logging.debug("RUMPS init")
         self.default_icon = "🌙"
         self.complete_icon = "✅"
 
         self.board = None
         self.last_board = None
+        self._check_counter = 0  # Used only when debug logging
 
     def calc_process(self, ind: str, repl=""):
+        logging.debug("Calc Process init")
         self.title = "🌀"
         self.board = self.board.replace(ind, repl)
         write_to_clipboard(str(eval(self.board)))
         self.title = self.complete_icon
 
     def ai_process(self, response_func, ind: str, repl=""):
+        logging.debug("AI Process init")
         self.title = "🌀"
         if repl != None:
             if self.board.endswith("?||"):
@@ -79,6 +102,12 @@ class HandyIntelligence(rumps.App):
 
     @rumps.timer(1)
     def check_clipboard(self, _):
+        if _is_logging_debug():
+            self._check_counter += 1
+            if self._check_counter % 60 == 0:
+                logger.debug(
+                    f"Check: #{self._check_counter}, Running for {_format_time(self._check_counter)} hr"
+                )
         self.board = read_from_clipboard()
         if self.last_board == self.board:
             self.title = self.default_icon
