@@ -41,22 +41,8 @@ logger = logging.getLogger(__name__)
 
 
 def _is_logging_debug():
-    root = logging.getLogger()
-    return any(handler.level <= logging.DEBUG for handler in root.handlers)
-
-
-# def _format_time(seconds):
-#     if seconds < 60:
-#         return f"{seconds} sec"
-#     elif seconds < 3600:
-#         minutes = seconds // 60
-#         return f"{minutes} min"
-#     elif seconds < 86400:
-#         hours = seconds // 3600
-#         return f"{hours} hr"
-#     else:
-#         days = seconds // 86400
-#         return f"{days} days"
+    root = logger.getLogger()
+    return any(handler.level <= logger.DEBUG for handler in root.handlers)
 
 
 def _format_time(seconds: int) -> str:
@@ -87,7 +73,7 @@ def write_to_clipboard(output):
 class HandyIntelligence(rumps.App):
     def __init__(self):
         super(HandyIntelligence, self).__init__("🌙")
-        logging.debug("RUMPS init")
+        logger.debug("RUMPS init")
         self.default_icon = "🌙"
         self.complete_icon = "✅"
 
@@ -96,14 +82,14 @@ class HandyIntelligence(rumps.App):
         self._check_counter = 0  # Used only when debug logging
 
     def calc_process(self, board: str, ind: str, repl=""):
-        logging.debug("Calc Process init")
+        logger.debug("Calc Process init")
         self.title = "🌀"
         self.board = board.replace(ind, repl)
         write_to_clipboard(str(eval(board)))
         self.title = self.complete_icon
 
     def ai_process(self, board: str, response_func, ind: str, repl=""):
-        logging.debug("AI Process init")
+        logger.debug("AI Process init")
         self.title = "🌀"
         if repl != None:
             if board.endswith("?||"):
