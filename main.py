@@ -1,5 +1,5 @@
-import logging
-import subprocess, rumps, time
+import subprocess, rumps
+import logging, logging.config
 import lang_model as lm
 from config_handler import config
 
@@ -8,7 +8,10 @@ from config_handler import config
 log_config = {
     "version": 1,
     "formatters": {
-        "simple": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"}
+        "simple": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s (%(lineno)d): %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        }
     },
     "handlers": {
         "console": {
@@ -106,7 +109,7 @@ class HandyIntelligence(rumps.App):
             self._check_counter += 1
             if self._check_counter % 60 == 0:
                 logger.debug(
-                    f"Check: #{self._check_counter}, Running for {_format_time(self._check_counter)} hr"
+                    f"Check: #{self._check_counter}, Running for {_format_time(self._check_counter)}"
                 )
         self.board = read_from_clipboard()
         if self.last_board == self.board:
