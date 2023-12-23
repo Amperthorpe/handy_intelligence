@@ -95,22 +95,22 @@ class HandyIntelligence(rumps.App):
         self.last_board = None
         self._check_counter = 0  # Used only when debug logging
 
-    def calc_process(self, ind: str, repl=""):
+    def calc_process(self, board: str, ind: str, repl=""):
         logging.debug("Calc Process init")
         self.title = "🌀"
-        self.board = self.board.replace(ind, repl)
-        write_to_clipboard(str(eval(self.board)))
+        self.board = board.replace(ind, repl)
+        write_to_clipboard(str(eval(board)))
         self.title = self.complete_icon
 
-    def ai_process(self, response_func, ind: str, repl=""):
+    def ai_process(self, board: str, response_func, ind: str, repl=""):
         logging.debug("AI Process init")
         self.title = "🌀"
         if repl != None:
-            if self.board.endswith("?||"):
-                self.board = self.board.replace("?||", "?")
+            if board.endswith("?||"):
+                self.board = board.replace("?||", "?")
             else:
-                self.board = self.board.replace(ind, repl)
-        write_to_clipboard(response_func(self.board))
+                self.board = board.replace(ind, repl)
+        write_to_clipboard(response_func(board))
         self.title = self.complete_icon
 
     @rumps.timer(1)
@@ -129,19 +129,26 @@ class HandyIntelligence(rumps.App):
         self.last_board = self.board
         logger.info(f"New Input: '{self.board}'")
 
-        if "|||" in self.board:
-            self.ai_process(lm.spellcheck, "|||")
-        elif "?||" in self.board:
-            self.ai_process(lm.general, "?||")
-        elif "|..|" in self.board:
-            self.ai_process(lm.insert, "|..|", None)
-        elif "=||" in self.board:
-            self.calc_process("=||")
-        elif '||"' in self.board:
-            self.ai_process(lm.quoted_instruct, '||"', None)
-        else:
-            logger.info("No indicator present.")
-            self.title = self.default_icon
+        match self.board:
+            case s if "|||" in s:
+                self.ai_process(s, lm.spellcheck, "")
+
+            case s if "?||" in s:
+                self.ai_process(s, lm.general, "?||")
+
+            case s if "|..|" in s:
+                self.ai_process(s, lm.insert, "|..|", None)
+
+            case s if "=||" in s:
+                self.calc_process(s, "=||")
+
+            case s if '||"' in s:
+                self.ai_process(s, lm.quoted_instruct, '||"', None)
+
+            case _:
+                logger.info("No indicator present.")
+                self.title = self.default_icon
+
         print()
 
 
