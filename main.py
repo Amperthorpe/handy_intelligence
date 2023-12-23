@@ -1,6 +1,40 @@
+import logging
 import subprocess, rumps, time
 import lang_model as lm
-from math import sqrt
+from config_handler import config
+
+### Logging ###
+
+log_config = {
+    "version": 1,
+    "formatters": {
+        "simple": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"}
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": config["Application"]["LOGGING_LEVEL"],
+            "formatter": "simple",
+            "stream": "ext://sys.stdout",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": config["Application"]["LOGGING_FILE"],
+            "level": config["Application"]["LOGGING_LEVEL"],
+            "formatter": "simple",
+        },
+    },
+    "root": {
+        "level": config["Application"]["LOGGING_LEVEL"],
+        "handlers": ["console", "file"],
+    },
+}
+
+# Configure the logging system
+logging.config.dictConfig(log_config)
+
+# Create a logger
+logger = logging.getLogger(__name__)
 
 
 ### Clipboard ###
