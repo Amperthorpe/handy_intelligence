@@ -92,10 +92,7 @@ class HandyIntelligence(rumps.App):
         logger.debug("AI Process init")
         self.title = "🌀"
         if repl != None:
-            if board.endswith("?||"):
-                self.board = board.replace("?||", "?")
-            else:
-                self.board = board.replace(ind, repl)
+            self.board = board.replace(ind, repl)
         write_to_clipboard(response_func(board))
         self.title = self.complete_icon
 
